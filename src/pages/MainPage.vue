@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import ConfigForm from '@/components/ConfigForm.vue';
+import GlobalLoading from '@/components/GlobalLoading.vue';
 </script>
 
 <template>
+  <global-loading />
   <header>
     <span>BiliChat</span>
   </header>

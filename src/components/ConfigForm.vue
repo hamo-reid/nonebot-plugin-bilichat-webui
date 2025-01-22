@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import API from '@/api';
+import { useGlobalStore } from '@/store';
+import { useMessage } from 'naive-ui';
 
+const globalStore = useGlobalStore();
+const message = useMessage();
 const schema = ref({});
 const config = ref({});
 
@@ -27,23 +31,29 @@ async function submitConfig() {
   const res = await API.saveConfig(config.value);
   if (res) {
     config.value = res;
+    message.success('配置已保存');
   } else {
-    console.log('Config not saved');
+    message.error('配置保存失败');
   }
 }
 
 async function initForm() {
-  schema.value = await getSchema();
+  const schemaData = await getSchema();
+  if (schemaData !== null) {
+    schema.value = schemaData;
+    globalStore.isGetConfigSchema = true;
+    message.info('已加载bot配置');
+  } else {
+    message.error('Get config schema failed');
+  };
   config.value = await getConfig();
-  console.log(config.value);
-  console.log(schema.value);
 }
 
 initForm();
 </script>
 
 <template>
-  <vue-form v-model="config" :schema="schema" @submit="submitConfig"/>
+  <vue-form v-model="config" :schema="schema" @submit="submitConfig" @validation-failed="message.error('表单验证失败，请检查')"/>
 </template>
 
 <style lang="scss" scoped></style>

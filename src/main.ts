@@ -12,6 +12,7 @@ import {
   NSwitch,
   NSelect,
 } from "naive-ui";
+import { createPinia } from "pinia";
 
 const naive = create({
   components: [
@@ -28,4 +29,5 @@ const naive = create({
 const app = createApp(App);
 app.component("VueForm", VueForm);
 app.use(naive);
+app.use(createPinia());
 app.mount("#app");
