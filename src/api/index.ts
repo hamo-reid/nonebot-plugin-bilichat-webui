@@ -1,42 +1,46 @@
 import HTTPClient, {
-  basicRequestInterceptor,
   basicResponseInterceptor
-} from "@/utils/http"
+} from "@/utils/http";
+import { type InternalAxiosRequestConfig } from "axios";
+
+import { useGlobalStore } from "@/store";
+
+const tokenRequestInterceptor = {
+  success: (config: InternalAxiosRequestConfig) => {
+    const globalStore = useGlobalStore();
+    if (globalStore.token) {
+      config.headers["Authorization"] = `Bearer ${globalStore.token}`;
+    }
+    return config;
+  },
+  error: (error: Error ) => {
+    return Promise.reject(error);
+  }
+}
 
 const request = new HTTPClient(
   {
     baseURL: `${window.location.protocol}//${window.location.host}/bilichatwebui`,
     timeout: 10000,
   },
-  [basicRequestInterceptor],
+  [tokenRequestInterceptor],
   [basicResponseInterceptor]
-)
+);
+
 
 async function getConfigSchema() {
   const res = await request.get("/config/schema")
-  if (res.status === 200) {
-    return res.data
-  } else {
-    return null
-  }
+  return res
 }
 
 async function getConfig() {
   const res = await request.get("/config")
-  if (res.status === 200) {
-    return res.data
-  } else {
-    return null
-  }
+  return res
 }
 
 async function saveConfig(config: any) {
   const res = await request.post("/config", config)
-  if (res.status === 200) {
-    return res.data
-  } else {
-    return null
-  }
+  return res
 }
 
 export default {

@@ -6,54 +6,58 @@ import { useMessage } from 'naive-ui';
 
 const globalStore = useGlobalStore();
 const message = useMessage();
-const schema = ref({});
 const config = ref({});
+let prevConfig = {};
+const saving = ref(false);
 
-async function getSchema() {
-  const res = await API.getConfigSchema();
-  if (res) {
-    return res;
+async function saveConfig() {
+  if (saving.value) return;
+  const msgReactive = message.loading('保存中...', { duration: 0 });
+  saving.value = true;
+  const {status, data} = await API.saveConfig(config.value);
+  if (status === 200) {
+    msgReactive.type = 'success';
+    msgReactive.content = '保存成功';
+    setTimeout(() => {
+      msgReactive.destroy();
+    }, 2000);
+    config.value = data;
+    prevConfig = data;
   } else {
-    return null;
+    msgReactive.type = 'error';
+    msgReactive.content = '保存失败';
+    setTimeout(() => {
+      msgReactive.destroy();
+    }, 2000);
   }
-};
-
-async function getConfig() {
-  const res = await API.getConfig();
-  if (res) {
-    return res;
-  } else {
-    return null;
-  }
-}
-
-async function submitConfig() {
-  const res = await API.saveConfig(config.value);
-  if (res) {
-    config.value = res;
-    message.success('配置已保存');
-  } else {
-    message.error('配置保存失败');
-  }
+  saving.value = false;
 }
 
 async function initForm() {
-  const schemaData = await getSchema();
-  if (schemaData !== null) {
-    schema.value = schemaData;
-    globalStore.isGetConfigSchema = true;
+  const {status: status2, data: data2} = await API.getConfig();
+  if (status2 === 200) {
+    config.value = data2;
+    prevConfig = data2;
     message.info('已加载bot配置');
   } else {
-    message.error('Get config schema failed');
-  };
-  config.value = await getConfig();
+    message.error('获取配置失败');
+  }
 }
 
-initForm();
+function rollbackConfig() {
+  config.value = prevConfig;
+  message.info('已移除修改');
+}
+
+initForm();  // 初始化表单
 </script>
 
 <template>
-  <vue-form v-model="config" :schema="schema" @submit="submitConfig" @validation-failed="message.error('表单验证失败，请检查')"/>
+  <vue-form
+   v-model="config"
+   :schema="globalStore.schema"
+   @submit="saveConfig"
+   @cancel="rollbackConfig"
+   @validation-failed="message.error('表单验证失败，请检查')"
+  />
 </template>
-
-<style lang="scss" scoped></style>

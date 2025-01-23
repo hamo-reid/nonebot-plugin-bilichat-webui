@@ -1,22 +1,32 @@
 <script setup lang="ts">
 import ConfigForm from '@/components/ConfigForm.vue';
 import GlobalLoading from '@/components/GlobalLoading.vue';
+import TokenDialog from '@/components/TokenDialog.vue';
+import { useMessage } from 'naive-ui';
+import { useGlobalStore } from '@/store';
+
+window.$message = useMessage();
+
+const globalStore = useGlobalStore();
 </script>
 
 <template>
-  <global-loading />
-  <header>
-    <span>BiliChat</span>
-  </header>
-  <main>
-    <config-form />
-  </main>
+  <div class="container">
+    <global-loading />
+    <header>
+      <span>BiliChat</span>
+    </header>
+    <main>
+      <config-form v-if="globalStore.isGetConfigSchema" />
+    </main>
+    <TokenDialog v-if="!globalStore.hasToken"></TokenDialog>
+  </div>
 </template>
 
 <style scoped lang="scss">
 header {
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
   align-items: center;
   height: 3.25rem;
   font-size: 1.4rem;
