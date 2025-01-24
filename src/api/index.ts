@@ -20,7 +20,7 @@ const tokenRequestInterceptor = {
 
 const request = new HTTPClient(
   {
-    baseURL: `${window.location.protocol}//${window.location.host}/bilichatwebui`,
+    baseURL: window.location.href.split('/index.html')[0],
     timeout: 10000,
   },
   [tokenRequestInterceptor],
@@ -30,6 +30,7 @@ const request = new HTTPClient(
 
 async function getConfigSchema() {
   const res = await request.get("/config/schema")
+  console.log("res", res)
   return res
 }
 
