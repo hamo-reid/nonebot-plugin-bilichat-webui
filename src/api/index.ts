@@ -1,6 +1,4 @@
-import HTTPClient, {
-  basicResponseInterceptor
-} from "@/utils/http";
+import HTTPClient, { basicResponseInterceptor } from "@/utils/http";
 import { type InternalAxiosRequestConfig } from "axios";
 
 import { useGlobalStore } from "@/store";
@@ -13,39 +11,45 @@ const tokenRequestInterceptor = {
     }
     return config;
   },
-  error: (error: Error ) => {
+  error: (error: Error) => {
     return Promise.reject(error);
-  }
-}
+  },
+};
 
 const request = new HTTPClient(
   {
-    baseURL: window.location.href.split('/index.html')[0],
+    baseURL: (() => {
+      // 根据环境变量判断请求的baseURL
+      if (import.meta.env.MODE === "development") {
+        return window.location.origin + "/bilichatwebui";
+      } else if (import.meta.env.MODE === "production") {
+        return window.location.href.split("/index.html")[0];
+      }
+    })(),
     timeout: 10000,
   },
   [tokenRequestInterceptor],
   [basicResponseInterceptor]
 );
 
-
 async function getConfigSchema() {
-  const res = await request.get("/config/schema")
-  console.log("res", res)
-  return res
+  const res = await request.get("/config/schema");
+  console.log("res", res);
+  return res;
 }
 
 async function getConfig() {
-  const res = await request.get("/config")
-  return res
+  const res = await request.get("/config");
+  return res;
 }
 
 async function saveConfig(config: any) {
-  const res = await request.post("/config", config)
-  return res
+  const res = await request.post("/config", config);
+  return res;
 }
 
 export default {
   getConfigSchema,
   getConfig,
-  saveConfig
-}
+  saveConfig,
+};

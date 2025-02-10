@@ -1,15 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, defineComponent } from 'vue';
 import API from '@/api';
-import { useGlobalStore } from '@/store';
+import { useConfigStore } from '@/store';
 import { useMessage } from 'naive-ui';
+import UserInfo from '@/components/fields/UserInfo.vue';
+import Dynamic from '@/components/fields/Dynamic.vue';
+defineComponent({
+  name: 'ConfigForm',
+  components: {UserInfo},
+})
 
-const globalStore = useGlobalStore();
+const configStore = useConfigStore();
 const message = useMessage();
 const config = ref({});
-let prevConfig = {};
 const saving = ref(false);
 
+/**
+ * 保存配置
+ */
 async function saveConfig() {
   if (saving.value) return;
   const msgReactive = message.loading('保存中...', { duration: 0 });
@@ -22,7 +30,6 @@ async function saveConfig() {
       msgReactive.destroy();
     }, 2000);
     config.value = data;
-    prevConfig = data;
   } else {
     msgReactive.type = 'error';
     msgReactive.content = '保存失败';
@@ -33,29 +40,47 @@ async function saveConfig() {
   saving.value = false;
 }
 
+/**
+ * 初始化表单
+ */
 async function initForm() {
-  const {status: status2, data: data2} = await API.getConfig();
-  if (status2 === 200) {
-    config.value = data2;
-    prevConfig = data2;
-    message.info('已加载bot配置');
-  } else {
-    message.error('获取配置失败');
-  }
+  await configStore.getBotConfig();
 }
 
+/**
+ * 撤销修改
+ */
 function rollbackConfig() {
-  config.value = prevConfig;
   message.info('已移除修改');
 }
 
 initForm();  // 初始化表单
+
+const uiSchema = {
+    subs: {
+      users: {
+        items: {
+          info: {
+            "ui:field": UserInfo,
+          },
+          subscribes: {
+            items: {
+              dynamic: {
+                "ui:field": Dynamic,
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 </script>
 
 <template>
   <vue-form
-   v-model="config"
-   :schema="globalStore.schema"
+   v-model="configStore.config"
+   :schema="configStore.configSchema"
+   :ui-schema="uiSchema"
    @submit="saveConfig"
    @cancel="rollbackConfig"
    @validation-failed="message.error('表单验证失败，请检查')"

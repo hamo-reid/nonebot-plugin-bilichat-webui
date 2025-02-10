@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { useGlobalStore } from '@/store';
+import { useConfigStore } from '@/store';
 
-const globalStore = useGlobalStore();
+const configStore = useConfigStore();
 
 </script>
 
 <template>
-  <div class="loading" v-show="!globalStore.isGetConfigSchema">
+  <div class="loading" v-show="!configStore.isGetConfigSchema">
     <div class="spinner-border text-light" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>

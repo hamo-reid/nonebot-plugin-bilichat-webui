@@ -26,6 +26,7 @@ export default defineConfig(() => (
         "/bilichatwebui": {
           target: env.VITE_API_URL,
           changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/bilichatwebui/, "")
         },
       }
     },

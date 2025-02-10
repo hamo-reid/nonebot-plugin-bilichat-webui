@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { NDialog, NSpace, NInput } from 'naive-ui';
-import { useGlobalStore } from '@/store';
+import { useGlobalStore, useConfigStore } from '@/store';
 import { ref } from 'vue';
 
 const globalStore = useGlobalStore();
+const configStore = useConfigStore();
 
 const token = ref('');
 const submitToken = () =>{
   console.log(token.value);
   globalStore.setToken(token.value);
-  globalStore.getConfigSchema();
+  configStore.getConfigSchema();
 }
 
 </script>

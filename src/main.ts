@@ -10,9 +10,10 @@ import {
   NFormItem,
   NInputNumber,
   NSwitch,
-  NSelect,
+  NSelect
 } from "naive-ui";
 import { createPinia } from "pinia";
+import { install as VueCodemirror } from "vue-codemirror";
 
 const naive = create({
   components: [
@@ -28,6 +29,7 @@ const naive = create({
 
 const app = createApp(App);
 app.component("VueForm", VueForm);
+app.use(VueCodemirror);
 app.use(naive);
 app.use(createPinia());
 app.mount("#app");
