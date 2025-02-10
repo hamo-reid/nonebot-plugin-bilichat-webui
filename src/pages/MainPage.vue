@@ -7,7 +7,6 @@ import { useGlobalStore, useConfigStore } from '@/store';
 import { useMessage, NModalProvider } from 'naive-ui';
 
 window.$message = useMessage();
-console.log('main page', window.$message);
 
 const globalStore = useGlobalStore();
 const configStore = useConfigStore();

@@ -92,11 +92,18 @@ export default defineConfig(() => (
           chunkFileNames: `assets/[name].[hash].js`,
           assetFileNames: `assets/[name].[hash].[ext]`,
           manualChunks(id){
-            if(id.includes("node_modules")){
-              return "vendor"
-            }
-            if(id.includes("/utils")){
-              return "utils"
+            if(id.includes("node_modules/vue")){
+              return "vue-vendor";
+            } else if (id.includes("node_modules/naive-ui")){
+              return "naive-ui-vendor";
+            } else if (id.includes("node_modules/@lljj")) {
+              return "vjsf-vendor"
+            } else if(id.includes("node_modules/lodash")){
+              return "lodash-vendor";
+            } else if(id.includes("/utils")){
+              return "utils";
+            } else if (id.includes("node_modules")) {
+              return "vendor";
             }
           }
         },

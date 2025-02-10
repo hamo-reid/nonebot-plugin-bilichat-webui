@@ -12,7 +12,6 @@ const code = computed({
     return JSON.stringify(configStore.config, null, 2);
   },
   set(val: any) {
-    console.log(typeof val);
     updateConfig(val);
   }
 })

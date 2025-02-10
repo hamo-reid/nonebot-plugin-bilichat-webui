@@ -34,7 +34,6 @@ const request = new HTTPClient(
 
 async function getConfigSchema() {
   const res = await request.get("/config/schema");
-  console.log("res", res);
   return res;
 }
 

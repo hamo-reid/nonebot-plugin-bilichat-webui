@@ -8,7 +8,6 @@ const configStore = useConfigStore();
 
 const token = ref('');
 const submitToken = () =>{
-  console.log(token.value);
   globalStore.setToken(token.value);
   configStore.getConfigSchema();
 }

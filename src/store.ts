@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
+import { shallowRef } from "vue";
 import API from "@/api";
-
-let prevBotConfig = {} as any;
 
 export const useGlobalStore = defineStore("global", {
   state: () => ({
@@ -24,9 +23,6 @@ export const useGlobalStore = defineStore("global", {
     removeToken() {
       this.token = "";
       window.localStorage.removeItem("token");
-    },
-    async recoverConfig() {
-      this.botConfig = prevBotConfig;
     }
   }
 })
@@ -36,11 +32,16 @@ export const useConfigStore = defineStore("config", {
     isGetConfigSchema: false,  // 是否已经获取过配置项的schema
     config: {},  // 当前配置项
     configSchema: {},  // 配置项的schema
-    prevConfig: {},  // 上一次保存的配置项
+    prevConfig: {},  // 上一次保存的配置项,
+    isSaving: false,  // 是否正在保存配置项
   }),
   actions: {
     tempUpdateConfig(config: any) {
       this.config = config;
+    },
+    rollbackConfig() {
+      window.$message.info("已经重置到上一次保存的配置")
+      this.config = this.prevConfig;
     },
     async getConfigSchema() {
       const globalStore = useGlobalStore();
@@ -66,7 +67,7 @@ export const useConfigStore = defineStore("config", {
       const { status, data} = await API.getConfig();
       if (status === 200) {
         this.config = data;
-        prevBotConfig = data;
+        this.prevConfig = shallowRef(data);
         globalStore.hasToken = true;
       } else if (status === 403 || status === 401) {
         window.$message.error("Token验证失败");
@@ -77,12 +78,19 @@ export const useConfigStore = defineStore("config", {
       }
     },
 
-    async saveBotConfig(config: object) {
+    async saveBotConfig() {
+      if (this.isSaving) return;
+      const msgReactive = window.$message.loading('保存中...', { duration: 0 });
       const globalStore = useGlobalStore();
-      const { status, data} = await API.saveConfig(config);
+      const { status, data} = await API.saveConfig(this.config);
       if (status === 200) {
+        msgReactive.type = 'success';
+        msgReactive.content = '保存成功';
+        setTimeout(() => {
+          msgReactive.destroy();
+        }, 2000);
         this.config = data;
-        prevBotConfig = data;
+        this.prevConfig = shallowRef(data);
         globalStore.hasToken = true;
       } else if (status === 403 || status === 401) {
         window.$message.error("Token验证失败");
