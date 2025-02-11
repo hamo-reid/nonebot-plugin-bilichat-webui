@@ -44,7 +44,7 @@ export default defineConfig(() => (
       minify: "terser", // 是否压缩
       cssCodeSplit: true, // 是否分割css
       outDir: "dist", // 输出目录
-      assetsDir: "assets", // 静态资源目录
+      assetsDir: "assets", // 静态资源目录,
       terserOptions: {
         compress: {
           // 是否压缩代码

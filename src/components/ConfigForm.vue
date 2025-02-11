@@ -4,38 +4,13 @@ import { useConfigStore } from '@/store';
 import { useMessage } from 'naive-ui';
 import UserInfo from '@/components/fields/UserInfo.vue';
 import Dynamic from '@/components/fields/Dynamic.vue';
+import ListItem from '@/components/fields/common/ListItem.vue';
 defineComponent({
   name: 'ConfigForm',
   components: { UserInfo },
 })
-
 const configStore = useConfigStore();
 const message = useMessage();
-
-/**
- * 保存配置
- */
-// async function saveConfig() {
-//   if (saving.value) return;
-//   const msgReactive = message.loading('保存中...', { duration: 0 });
-//   saving.value = true;
-//   const { status, data } = await API.saveConfig(config.value);
-//   if (status === 200) {
-//     msgReactive.type = 'success';
-//     msgReactive.content = '保存成功';
-//     setTimeout(() => {
-//       msgReactive.destroy();
-//     }, 2000);
-//     config.value = data;
-//   } else {
-//     msgReactive.type = 'error';
-//     msgReactive.content = '保存失败';
-//     setTimeout(() => {
-//       msgReactive.destroy();
-//     }, 2000);
-//   }
-//   saving.value = false;
-// }
 
 /**
  * 初始化表单
@@ -50,12 +25,13 @@ const uiSchema = {
         addable: false,
       },
       items: {
-
+        "ui:field": ListItem,
         info: {
           "ui:field": UserInfo,
         },
         subscribes: {
           items: {
+            "ui:field": ListItem,
             dynamic: {
               "ui:field": Dynamic,
             }
