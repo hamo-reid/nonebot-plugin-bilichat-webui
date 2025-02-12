@@ -19,6 +19,13 @@ const message = useMessage();
 configStore.getBotConfig();  // 初始化表单
 
 const uiSchema = {
+  api: {
+    request_api: {
+      items: {
+        "ui:field": ListItem,
+      }
+    }
+  },
   subs: {
     users: {
       'ui:options': {

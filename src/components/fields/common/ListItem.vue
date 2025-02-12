@@ -15,7 +15,10 @@ const nextProps = computed(() => {
     schema: props.schema,
     uiSchema: nextUiSchema,
     errorSchema: props.errorSchema,
-    customRule: ()=> {},
+    customRule: (
+    {callback}: {[key: string]: any})=> {
+      return callback();
+    },
     customFormats: props.customFormats,
     rootSchema: props.rootSchema,
     rootFormData: props.rootFormData,

@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { shallowRef } from "vue";
 import API from "@/api";
 
 export const useGlobalStore = defineStore("global", {
@@ -67,7 +66,7 @@ export const useConfigStore = defineStore("config", {
       const { status, data} = await API.getConfig();
       if (status === 200) {
         this.config = data;
-        this.prevConfig = shallowRef(data);
+        this.prevConfig = data;
         globalStore.hasToken = true;
       } else if (status === 403 || status === 401) {
         window.$message.error("Token验证失败");
@@ -79,6 +78,7 @@ export const useConfigStore = defineStore("config", {
     },
 
     async saveBotConfig() {
+      console.log("saveBotConfig");
       if (this.isSaving) return;
       const msgReactive = window.$message.loading('保存中...', { duration: 0 });
       const globalStore = useGlobalStore();
@@ -90,7 +90,7 @@ export const useConfigStore = defineStore("config", {
           msgReactive.destroy();
         }, 2000);
         this.config = data;
-        this.prevConfig = shallowRef(data);
+        this.prevConfig = data;
         globalStore.hasToken = true;
       } else if (status === 403 || status === 401) {
         window.$message.error("Token验证失败");
